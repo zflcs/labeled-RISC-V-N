@@ -1,5 +1,8 @@
 target/
-project/target
+project/*
+!project/.gitignore
+!project/build.properties
+!project/plugins.sbt
 *.swp
 *~
 .addons-dont-touch
@@ -21,3 +24,8 @@ fpga/.Xil/
 fpga/bbl.elf.txt
 fpga/vivado_*.str
 fpga/vmlinux.txt
+
+.vscode
+.metals
+.bloop
+.scalafmt.conf

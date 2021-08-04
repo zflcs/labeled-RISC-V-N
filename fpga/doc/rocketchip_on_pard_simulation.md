@@ -1,4 +1,4 @@
-## 如何运行模拟
+# 如何运行模拟
 
 1. 进入 `riscv_fpga_pard/fpga/emulator` 执行 `make run-emu`最终生成的可执行文件是build/emu，输出到串口的内容在serial1000或者serial2000中。在运行hello时，可能输出的串口中内容有两份，这是正常的，因为有两个核，他们都在运行hello，且都输出到了串口中。
 2. 在修改之后，建议先运行AM里面的hello程序。再运行bbl。运行的程序需要被objcopy成bin文件，并dump成bin.txt放到build目录下。
