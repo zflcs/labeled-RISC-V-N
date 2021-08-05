@@ -1,7 +1,7 @@
 #--------------------------------------------------------------------
 # Verilator Generation
 #--------------------------------------------------------------------
-mem_init = $(base_dir)/fpga/emu/mem_init
+mem_init = $(base_dir)/fpga/emu/mem_init_2
 
 firrtl = $(generated_dir)/$(long_name).fir
 verilog = \
@@ -25,7 +25,7 @@ $(generated_dir)/%.fir $(generated_dir)/%.d: $(FIRRTL_JAR) $(chisel_srcs) $(boot
 $(generated_dir)/$(long_name).behav_srams.v : $(generated_dir)/$(long_name).conf $(VLSI_MEM_GEN)
 	cd $(generated_dir) && \
 	$(VLSI_MEM_GEN) $(generated_dir)/$(long_name).conf > $@.tmp && \
-  $(mem_init) $@.tmp mem_ext bin.txt $(generated_dir)/$(long_name).json > $@
+  $(mem_init) $@.tmp mem_ext sbi_bin.txt os_bin.txt $(generated_dir)/$(long_name).json > $@
 	rm -f $@.tmp
 
 $(generated_dir)/$(long_name).origin_behav_srams.v : $(generated_dir)/$(long_name).conf $(VLSI_MEM_GEN)

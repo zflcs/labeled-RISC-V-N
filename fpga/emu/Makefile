@@ -18,7 +18,13 @@ SEED ?=
 
 original_emu = $(base_dir)/emulator/emulator-$(PROJECT)-$(CONFIG)
 emu = $(build_dir)/emu
+
 emu_bin_file = $(build_dir)/linux.bin
+emu_sbi_bin_file = $(build_dir)/lrv-rust-bl.bin
+emu_sbi_bin_hex_file = $(build_dir)/sbi_bin.txt
+emu_os_bin_file = $(build_dir)/os.bin
+emu_os_bin_hex_file = $(build_dir)/os_bin.txt
+
 emu_gen_script = gen_bin.sh
 emu_bin_hex_file = $(build_dir)/bin.txt
 nohype_dtb = $(build_dir)/c0.dtb
@@ -51,6 +57,14 @@ $(emu_bin_hex_file): $(emu_bin_file)
 	mkdir -p $(@D)
 	bash $(emu_gen_script) $< $@
 
+$(emu_sbi_bin_hex_file): $(emu_sbi_bin_file)
+	mkdir -p $(@D)
+	bash $(emu_gen_script) $< $@
+
+$(emu_os_bin_hex_file): $(emu_os_bin_file)
+	mkdir -p $(@D)
+	bash $(emu_gen_script) $< $@
+
 emu: $(emu)
 
 ifdef DEBUG
@@ -58,6 +72,10 @@ DEBUG_ARGS = +jtag_rbb_enable=1 -r 4040
 endif
 
 run-emu: $(emu) $(emu_bin_hex_file) $(nohype_dtb_hex_file)
+	cd $(dir $(emu)) && LD_LIBRARY_PATH=$(RISCV)/lib time $< $(DEBUG_ARGS) $(SEED) +verbose $(OPT_MAX_CYCLE) . 3>&1 1>&2 2>&3 \
+		| spike-dasm > $(dir $(emu))/emu.log
+
+run-emu-2: $(emu) $(emu_sbi_bin_hex_file) $(emu_os_bin_hex_file) $(nohype_dtb_hex_file)
 	cd $(dir $(emu)) && LD_LIBRARY_PATH=$(RISCV)/lib time $< $(DEBUG_ARGS) $(SEED) +verbose $(OPT_MAX_CYCLE) . 3>&1 1>&2 2>&3 \
 		| spike-dasm > $(dir $(emu))/emu.log
 
