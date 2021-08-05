@@ -112,7 +112,12 @@ trait HasTiles extends HasCoreMonitorBundles { this: BaseSubsystem =>
         .getOrElse { meipNode.get }
 
     //    From PLIC: "seip" (only if vm/supervisor mode is enabled)
+    // TODO: Add ueip
     if (tile.tileParams.core.useVM) {
+      tile.crossIntIn() :=
+        plicOpt .map { _.intnode }
+          .getOrElse { NullIntSource() }
+      // Is this OK for UEIP?
       tile.crossIntIn() :=
         plicOpt .map { _.intnode }
           .getOrElse { NullIntSource() }
