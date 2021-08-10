@@ -119,7 +119,7 @@ class LvNAConfigemu extends Config(
   new WithoutFPU
   ++ new WithNonblockingL1(8)
   ++ new WithNL2CacheCapacity(256)
-  ++ new WithNBigCores(4)
+  ++ new WithNBigCores(2)
   ++ new WithEmu
   ++ new WithRationalRocketTiles
   ++ new WithTimebase(BigInt(100000000)) // 100 MHz
@@ -144,6 +144,7 @@ class LvNAFPGAConfigzcu102 extends Config(
   new WithoutFPU
   ++ new WithNonblockingL1(8)
   ++ new WithNL2CacheCapacity(2048)
+  ++ new WithNExtTopInterrupts(5)
   ++ new WithNBigCores(4)
   ++ new WithRationalRocketTiles
   ++ new WithTimebase(BigInt(10000000)) // 10 MHz

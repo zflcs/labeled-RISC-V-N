@@ -312,6 +312,8 @@ proc create_hier_cell_hier_uart { parentCell nameHier } {
   create_bd_pin -dir I -type rst aresetn
   create_bd_pin -dir I -type clk pardcore_coreclk
   create_bd_pin -dir I -type rst pardcore_uncorerstn
+  create_bd_pin -dir O -type intr pardcore_uart0_irq
+  create_bd_pin -dir O -type intr pardcore_uart1_irq
   create_bd_pin -dir O -type intr uart0_irq
   create_bd_pin -dir O -type intr uart1_irq
   create_bd_pin -dir O -type intr uart2_irq
@@ -399,7 +401,9 @@ proc create_hier_cell_hier_uart { parentCell nameHier } {
   connect_bd_net -net axi_uartlite_2_tx [get_bd_pins axi_uartlite_2/tx] [get_bd_pins axi_uartlite_pardcore_2/rx]
   connect_bd_net -net axi_uartlite_3_interrupt [get_bd_pins uart3_irq] [get_bd_pins axi_uartlite_3/interrupt]
   connect_bd_net -net axi_uartlite_3_tx [get_bd_pins axi_uartlite_3/tx] [get_bd_pins axi_uartlite_pardcore_3/rx]
+  connect_bd_net -net axi_uartlite_pardcore_0_interrupt [get_bd_pins pardcore_uart0_irq] [get_bd_pins axi_uartlite_pardcore_0/interrupt]
   connect_bd_net -net axi_uartlite_pardcore_0_tx [get_bd_pins axi_uartlite_0/rx] [get_bd_pins axi_uartlite_pardcore_0/tx]
+  connect_bd_net -net axi_uartlite_pardcore_1_interrupt [get_bd_pins pardcore_uart1_irq] [get_bd_pins axi_uartlite_pardcore_1/interrupt]
   connect_bd_net -net axi_uartlite_pardcore_1_tx [get_bd_pins axi_uartlite_1/rx] [get_bd_pins axi_uartlite_pardcore_1/tx]
   connect_bd_net -net axi_uartlite_pardcore_2_tx [get_bd_pins axi_uartlite_2/rx] [get_bd_pins axi_uartlite_pardcore_2/tx]
   connect_bd_net -net axi_uartlite_pardcore_3_tx [get_bd_pins axi_uartlite_3/rx] [get_bd_pins axi_uartlite_pardcore_3/tx]
@@ -890,6 +894,8 @@ proc create_root_design { parentCell } {
    CONFIG.ASSOCIATED_BUSIF {S_AXI_MEM:S_AXI_MMIO:M_AXI_DMA:M_AXI_SBUS} \
  ] $pardcore_uncoreclk
   set s2mm_introut [ create_bd_port -dir O -type intr s2mm_introut ]
+  set pardcore_uart0_irq [ create_bd_port -dir O -type intr pardcore_uart0_irq]
+  set pardcore_uart1_irq [ create_bd_port -dir O -type intr pardcore_uart1_irq]
 
   # Create instance: hier_clkrst
   create_hier_cell_hier_clkrst [current_bd_instance .] hier_clkrst
@@ -1645,6 +1651,8 @@ proc create_root_design { parentCell } {
   connect_bd_net -net hier_uart_uart1_irq [get_bd_pins hier_uart/uart1_irq] [get_bd_pins xlconcat_0/In3]
   connect_bd_net -net hier_uart_uart2_irq [get_bd_pins hier_uart/uart2_irq] [get_bd_pins xlconcat_0/In4]
   connect_bd_net -net hier_uart_uart3_irq [get_bd_pins hier_uart/uart3_irq] [get_bd_pins xlconcat_0/In5]
+  connect_bd_net -net hier_uart_pardcore_uart0_irq [get_bd_pins hier_uart/pardcore_uart0_irq] [get_bd_ports pardcore_uart0_irq]
+  connect_bd_net -net hier_uart_pardcore_uart1_irq [get_bd_pins hier_uart/pardcore_uart1_irq] [get_bd_ports pardcore_uart1_irq]
   connect_bd_net -net jtag_TDO_1 [get_bd_ports jtag_TDO] [get_bd_pins hier_prm_peripheral/jtag_TDO]
   connect_bd_net -net pardcore_uncorerst_interconnect_aresetn [get_bd_pins hier_clkrst/interconnect_aresetn1] [get_bd_pins hier_parcore_peripheral/S00_ARESETN] [get_bd_pins hier_prm_peripheral/S00_ARESETN] [get_bd_pins hier_uart/aresetn]
   connect_bd_net -net proc_sys_reset_0_interconnect_aresetn [get_bd_pins hier_clkrst/interconnect_aresetn] [get_bd_pins hier_parcore_peripheral/aresetn]

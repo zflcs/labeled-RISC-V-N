@@ -76,7 +76,7 @@ run-emu: $(emu) $(emu_bin_hex_file) $(nohype_dtb_hex_file)
 		| spike-dasm > $(dir $(emu))/emu.log
 
 run-emu-2: $(emu) $(emu_sbi_bin_hex_file) $(emu_os_bin_hex_file) $(nohype_dtb_hex_file)
-	cd $(dir $(emu)) && LD_LIBRARY_PATH=$(RISCV)/lib time $< $(DEBUG_ARGS) $(SEED) +verbose $(OPT_MAX_CYCLE) . 3>&1 1>&2 2>&3 \
+	cd $(dir $(emu)) && LD_LIBRARY_PATH=$(RISCV)/lib $< $(DEBUG_ARGS) $(SEED) +verbose $(OPT_MAX_CYCLE) . 3>&1 1>&2 2>&3 \
 		| spike-dasm > $(dir $(emu))/emu.log
 
 dtb-clean:

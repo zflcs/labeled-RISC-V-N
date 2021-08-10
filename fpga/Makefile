@@ -13,7 +13,8 @@ VIVADO_FLAG = -nolog -nojournal -notrace
 
 PRJ_ROOT = board/$(BOARD)/build/$(PRJ_FULL)
 XPR_FILE = $(PRJ_ROOT)/$(PRJ_FULL).xpr
-$(XPR_FILE):
+BD_TCL_FILE = board/$(BOARD)/bd/prm.tcl
+$(XPR_FILE): $(BD_TCL_FILE)
 	make -C pardcore BOARD=$(BOARD)
 	vivado $(VIVADO_FLAG) -mode batch -source board/$(BOARD)/mk.tcl -tclargs $(PRJ_FULL)
 

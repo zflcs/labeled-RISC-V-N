@@ -33,7 +33,7 @@ $(generated_dir)/$(long_name).origin_behav_srams.v : $(generated_dir)/$(long_nam
 	$(VLSI_MEM_GEN) $(generated_dir)/$(long_name).conf > $@
 
 # Build and install our own Verilator, to work around versionining issues.
-VERILATOR_VERSION=4.008
+VERILATOR_VERSION=4.210
 VERILATOR_SRCDIR ?= verilator/src/verilator-$(VERILATOR_VERSION)
 VERILATOR_TARGET := $(abspath verilator/install/bin/verilator)
 INSTALLED_VERILATOR ?= $(VERILATOR_TARGET)
@@ -72,7 +72,8 @@ VERILATOR_FLAGS := --top-module $(MODEL) \
   --output-split-cfuncs 20000 \
   --threads $(VERILATOR_THREADS) \
   --threads-max-mtasks $(VERILATOR_THREADS) \
-  -Wno-UNOPTTHREADS -Wno-STMTDLY --x-assign unique \
+  -Wno-UNOPTTHREADS -Wno-STMTDLY -Wno-LATCH \
+  --x-assign unique \
   -I$(vsrc) \
   -O3 -CFLAGS "$(CXXFLAGS) -DVERILATOR -DTEST_HARNESS=V$(MODEL) -include $(csrc)/verilator.h -include $(generated_dir)/$(PROJECT).$(CONFIG).plusArgs"
 cppfiles = $(addprefix $(csrc)/, $(addsuffix .cc, $(CXXSRCS)))
