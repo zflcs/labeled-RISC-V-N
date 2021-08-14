@@ -33,6 +33,7 @@ module system_top (
   wire s2mm_introut;
   wire pardcore_uart0_irq;
   wire pardcore_uart1_irq;
+  wire pardcore_uart2_irq;
 
   zynq_soc zynq_soc_i (
     `axi_connect_if(S_AXI_MEM, AXI_MEM_MAPPED),
@@ -59,6 +60,7 @@ module system_top (
     .pardcore_corerstn(pardcore_corerstn),
     .pardcore_uart0_irq(pardcore_uart0_irq),
     .pardcore_uart1_irq(pardcore_uart1_irq),
+    .pardcore_uart2_irq(pardcore_uart2_irq),
     .pardcore_uncoreclk(pardcore_uncoreclk)
   );
 
@@ -91,7 +93,7 @@ module system_top (
     .jtag_TDO(jtag_TDO),
     .jtag_TRST(~pardcore_corerstn),
 
-    .intrs({s2mm_introut, mm2s_introut, pardcore_uart0_irq, pardcore_uart1_irq}),
+    .intrs({pardcore_uart2_irq, pardcore_uart1_irq, pardcore_uart0_irq, s2mm_introut, mm2s_introut}),
 
     .led(led[7]),
 
