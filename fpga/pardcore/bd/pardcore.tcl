@@ -280,7 +280,7 @@ proc create_root_design { parentCell } {
   set coreclk [ create_bd_port -dir I coreclk ]
   set corersts [ create_bd_port -dir I -from 1 -to 0 corersts ]
   set distinct_hart_dsid_en [ create_bd_port -dir I -type data distinct_hart_dsid_en ]
-  set intrs [ create_bd_port -dir I -from 4 -to 0 intrs ]
+  set intrs [ create_bd_port -dir I -from 6 -to 0 intrs ]
   set jtag_TCK [ create_bd_port -dir I jtag_TCK ]
   set jtag_TDI [ create_bd_port -dir I jtag_TDI ]
   set jtag_TDO [ create_bd_port -dir O jtag_TDO ]
