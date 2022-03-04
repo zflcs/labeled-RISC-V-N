@@ -128,4 +128,13 @@ sw: bbl
 sw-clean: bbl-clean linux-clean
 	-$(RFS_ENV) $(MAKE) -C $(ROOTFS_PATH) clean
 
+lrv-bl:
+	cd ../../lrv-rust-bl && just build
+	cp -f ../../lrv-rust-bl/target/riscv64imac-unknown-none-elf/debug/lrv-rust-bl.bin ./build/lrv-rust-bl.bin
+
+
+csr-test: lrv-bl
+	cd ../../rv-csr-test && LOG=DEBUG just build_lrv
+	cp -f ../../rv-csr-test/target/riscv64imac-unknown-none-elf/release/rv-csr-test.bin ./build/os.bin
+
 .PHONY: sw sw-clean
