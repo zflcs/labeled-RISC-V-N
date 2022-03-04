@@ -1,7 +1,9 @@
 default: all
 
 base_dir = $(abspath ..)
-generated_dir = $(abspath ./generated-src)
+fpga_dir = $(abspath ../fpga)
+build_dir = $(fpga_dir)/build
+generated_dir = $(build_dir)/generated-src
 generated_dir_debug = $(abspath ./generated-src-debug)
 sim_dir = .
 output_dir = $(sim_dir)/output
