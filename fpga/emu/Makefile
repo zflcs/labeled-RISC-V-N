@@ -17,7 +17,9 @@ SEED ?=
 #--------------------------------------------------------------------
 
 original_emu = $(base_dir)/emulator/emulator-$(PROJECT)-$(CONFIG)
+original_emu_debug = $(base_dir)/emulator/emulator-$(PROJECT)-$(CONFIG)-debug
 emu = $(build_dir)/emu
+emu_debug = $(build_dir)/emu-debug
 
 emu_bin_file = $(build_dir)/linux.bin
 emu_sbi_bin_file = $(build_dir)/lrv-rust-bl.bin
@@ -45,6 +47,13 @@ $(original_emu):
 	$(MAKE) all -C $(base_dir)/emulator CONFIG=$(CONFIG) \
 		generated_dir=$(generated_dir)
 
+$(emu_debug): $(original_emu_debug)
+	ln -sf $< $@
+
+$(original_emu_debug):
+	$(MAKE) debug -C $(base_dir)/emulator CONFIG=$(CONFIG) \
+		generated_dir=$(generated_dir)
+
 $(nohype_dtb): $(build_dir)/generated-src/freechips.rocketchip.system.$(CONFIG).dts
 	dtc $^ -O dtb -o emu.dtb
 	./gen_nohype_dtb emu.dtb $(build_dir) || echo "Please install python module 'pyfdt'"
@@ -69,6 +78,7 @@ emu: $(emu)
 
 ifdef DEBUG
 DEBUG_ARGS = +jtag_rbb_enable=1 -r 4040
+# DEBUG_ARGS = -v emu_debug.vcd  -x 100000
 endif
 
 run-emu: $(emu) $(emu_bin_hex_file) $(nohype_dtb_hex_file)
@@ -77,6 +87,12 @@ run-emu: $(emu) $(emu_bin_hex_file) $(nohype_dtb_hex_file)
 
 run-emu-2: $(emu) $(emu_sbi_bin_hex_file) $(emu_os_bin_hex_file) $(nohype_dtb_hex_file)
 	cd $(dir $(emu)) && LD_LIBRARY_PATH=$(RISCV)/lib $< $(DEBUG_ARGS) $(SEED) +verbose $(OPT_MAX_CYCLE) . 3>&1 1>&2 2>&3 \
+		| spike-dasm > $(dir $(emu))/emu.log
+
+run-emu-debug: $(emu_debug) $(emu_sbi_bin_hex_file) $(emu_os_bin_hex_file) $(nohype_dtb_hex_file)
+	cd $(dir $(emu_debug)) && \
+	LD_LIBRARY_PATH=$(RISCV)/lib $< $(DEBUG_ARGS) $(SEED) \
+	+verbose $(OPT_MAX_CYCLE) . 3>&1 1>&2 2>&3 \
 		| spike-dasm > $(dir $(emu))/emu.log
 
 dtb-clean:
