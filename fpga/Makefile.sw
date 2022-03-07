@@ -134,7 +134,7 @@ lrv-bl:
 
 
 csr-test: lrv-bl
-	cd ../../rv-csr-test && LOG=DEBUG just build_lrv
+	cd ../../rv-csr-test && LOG=DEBUG just disasm_lrv
 	cp -f ../../rv-csr-test/target/riscv64imac-unknown-none-elf/release/rv-csr-test.bin ./build/os.bin
 
 .PHONY: sw sw-clean
