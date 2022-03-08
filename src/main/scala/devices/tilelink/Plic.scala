@@ -168,6 +168,8 @@ class TLPLIC(params: PLICParams, beatBytes: Int)(implicit p: Parameters) extends
     // For now, use LevelGateways for all TL2 interrupts
     val gateways = interrupts.map { case i =>
       val gateway = Module(new LevelGateway)
+      val tracer = Module(new Tracer("gateway"))
+      tracer.io.signal := i
       gateway.io.interrupt := i
       gateway.io.plic
     }
@@ -191,11 +193,13 @@ class TLPLIC(params: PLICParams, beatBytes: Int)(implicit p: Parameters) extends
     val enables = Seq.fill(nHarts) { enableRegs }
     val enableVec = Vec(enables.map(x => Cat(x.reverse)))
     val enableVec0 = Vec(enableVec.map(x => Cat(x, UInt(0, width=1))))
-    
+
     val maxDevs = Reg(Vec(nHarts, UInt(width = log2Ceil(nDevices+1))))
     val pendingUInt = Cat(pending.reverse)
     for (hart <- 0 until nHarts) {
       val fanin = Module(new PLICFanIn(nDevices, prioBits))
+      val tracer = Module(new Tracer(s"fanin-$hart"))
+      tracer.io.signal := enableVec(hart) & pendingUInt
       fanin.io.prio := priority
       fanin.io.ip   := enableVec(hart) & pendingUInt
       maxDevs(hart) := fanin.io.dev
@@ -297,7 +301,7 @@ class TLPLIC(params: PLICParams, beatBytes: Int)(implicit p: Parameters) extends
             (Bool(true), maxDevs(i))
           },
           RegWriteFn { (valid, data) =>
-            assert(completerDev === data.extract(log2Ceil(nDevices+1)-1, 0), 
+            assert(completerDev === data.extract(log2Ceil(nDevices+1)-1, 0),
                    "completerDev should be consistent for all harts")
             completerDev := data.extract(log2Ceil(nDevices+1)-1, 0)
             completer(i) := valid && enableVec0(i)(completerDev)

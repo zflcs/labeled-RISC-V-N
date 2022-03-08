@@ -10,9 +10,10 @@ import freechips.rocketchip.diplomacy.{LazyModule, LazyModuleImp}
 //case object PeripheryUARTKey extends Field[Seq[UARTParams]]
 
 trait HasPeripheryUART { this: BaseSubsystem =>
-  val uartParams = Seq.tabulate(p(NTiles)) { i => //p(PeripheryUARTKey)
-    UARTParams(address = BigInt(0x60000000L + i * 0x1000L))
-  }
+  val uartParams = Seq(UARTParams(address = BigInt(0x60000000L))) ++
+    Seq.tabulate(p(NTiles)) { i => //p(PeripheryUARTKey)
+      UARTParams(address = BigInt(0x60001000L + i * 0x1000L))
+    }
   val uarts = uartParams map { params =>
     val uart = LazyModule(new TLUART(pbus.beatBytes, params))
 

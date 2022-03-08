@@ -382,6 +382,16 @@ class CSRFile(
   io.interrupts.seip.foreach { mip.seip := reg_mip.seip || _ }
   io.interrupts.ueip.foreach { mip.ueip := reg_mip.ueip || _ }
   mip.rocc := io.rocc_interrupt
+
+  val seip_tracer = Module(new Tracer("seip"))
+  val ssip_tracer = Module(new Tracer("ssip"))
+  val ueip_tracer = Module(new Tracer("ueip"))
+  val usip_tracer = Module(new Tracer("usip"))
+  seip_tracer.io.signal := mip.seip
+  ssip_tracer.io.signal := mip.ssip
+  ueip_tracer.io.signal := mip.ueip
+  usip_tracer.io.signal := mip.usip
+
   val read_mip = mip.asUInt & supported_interrupts
   val high_interrupts = io.interrupts.buserror.map(_ << CSR.busErrorIntCause).getOrElse(0.U)
 

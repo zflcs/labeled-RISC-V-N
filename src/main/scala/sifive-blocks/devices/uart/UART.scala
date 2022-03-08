@@ -234,12 +234,22 @@ trait HasUARTTopModuleContents extends HasUARTParameters with HasRegMap {
   rxq.io.enq <> rxm.io.out
   rxm.io.div := div
 
-  val ie = Reg(init = new UARTInterrupts().fromBits(Bits(0)))
+  // val ie = Reg(init = new UARTInterrupts().fromBits(Bits(0)))
+  val ie = Reg(init = Bool(false))
   val ip = Wire(new UARTInterrupts)
 
-  ip.txwm := (txq.io.count < txwm)
+  // ip.txwm := (txq.io.count < txwm)
+  ip.txwm := (txq.io.count === UInt(0))
   ip.rxwm := (rxq.io.count > rxwm)
-  interrupts(0) := Bool(false) //(ip.txwm && ie.txwm) || (ip.rxwm && ie.rxwm)
+
+  // interrupts(0) := Bool(false) //(ip.txwm && ie.txwm) || (ip.rxwm && ie.rxwm)
+  interrupts(0) := (ip.txwm || ip.rxwm) && ie
+  val tracer = Module(new Tracer(s"uart_intr@${c.address}"))
+  tracer.io.signal := interrupts(0)
+  // val tracer2 = Module(new Tracer("ie"))
+  // val tracer3 = Module(new Tracer("txwm"))
+  // tracer2.io.signal := ie
+  // tracer3.io.signal := ip.txwm
 
   regmap(
     UARTCtrlRegs.txfifo -> NonBlockingEnqueue(txq.io.enq),
@@ -260,7 +270,8 @@ trait HasUARTTopModuleContents extends HasUARTParameters with HasRegMap {
     RegField.r(1, UInt(0)),
     RegField.r(1, UInt(0)),
     RegField.r(2, UInt(0)),
-    RegField.r(1, UInt(0))
+    // RegField.r(1, UInt(0))
+    RegField.w(1, ie)
   )
 
 
