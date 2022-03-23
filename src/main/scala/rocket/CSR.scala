@@ -392,6 +392,11 @@ class CSRFile(
   ueip_tracer.io.signal := mip.ueip
   usip_tracer.io.signal := mip.usip
 
+  val sie_tracer = Module(new Tracer("status.sie"))
+  sie_tracer.io.signal := reg_mstatus.sie
+  val uie_tracer = Module(new Tracer("status.uie"))
+  uie_tracer.io.signal := reg_mstatus.uie
+
   val read_mip = mip.asUInt & supported_interrupts
   val high_interrupts = io.interrupts.buserror.map(_ << CSR.busErrorIntCause).getOrElse(0.U)
 

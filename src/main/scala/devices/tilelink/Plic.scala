@@ -35,6 +35,12 @@ class LevelGateway extends Module {
   when (io.interrupt && io.plic.ready) { inFlight := true }
   when (io.plic.complete) { inFlight := false }
   io.plic.valid := io.interrupt && !inFlight
+  val tracer_intr = Module(new Tracer("gateway-intr"))
+  tracer_intr.io.signal := io.interrupt
+  val tracer_inf = Module(new Tracer("gateway-inFlight"))
+  tracer_inf.io.signal := inFlight
+  val tracer_valid = Module(new Tracer("gateway-valid"))
+  tracer_valid.io.signal := io.plic.valid
 }
 
 object PLICConsts
@@ -168,8 +174,6 @@ class TLPLIC(params: PLICParams, beatBytes: Int)(implicit p: Parameters) extends
     // For now, use LevelGateways for all TL2 interrupts
     val gateways = interrupts.map { case i =>
       val gateway = Module(new LevelGateway)
-      val tracer = Module(new Tracer("gateway"))
-      tracer.io.signal := i
       gateway.io.interrupt := i
       gateway.io.plic
     }
