@@ -109,7 +109,7 @@ $(LINUX_ELF_BUILD): | $(LINUX_REPO_PATH) $(ROOTFS_PATH)
 	$(RFS_ENV) $(MAKE) -C $(ROOTFS_PATH)
 	cd $(@D) && \
 		git checkout $(LINUX_BUILD_COMMIT) && \
-		(($(RFS_ENV) $(MAKE) CROSS_COMPILE=$(RISCV_PREFIX) ARCH=riscv vmlinux) || (git checkout @{-1}; false)) && \
+		(($(RFS_ENV) $(MAKE) CROSS_COMPILE=riscv64-unknown-linux-gnu- ARCH=riscv vmlinux) || (git checkout @{-1}; false)) && \
 		git checkout @{-1}
 
 linux-clean:
